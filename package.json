@@ -1,0 +1,16 @@
+{
+  "name": "openapi-monorepo-example",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "19.2.2",
+    "@openapitools/openapi-generator-cli": "2.13.4",
+    "@redocly/cli": "1.14.0",
+    "@stoplight/prism-cli": "5.8.1",
+    "@stoplight/spectral-cli": "6.11.1",
+    "@stoplight/spectral-owasp-ruleset": "2.0.1",
+    "nx": "19.2.2",
+    "rimraf": "5.0.7"
+  }
+}

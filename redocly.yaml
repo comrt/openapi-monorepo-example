@@ -1,0 +1,16 @@
+# See https://redocly.com/docs/cli/configuration/ for more information.
+apis:
+  example-api@membrane:
+    root: apis/example-api/openapi.yaml
+    decorators:
+      plugin/replace-servers-url:
+        serverUrl: 'http://host.docker.internal:4010'
+plugins:
+  - './plugins/plugin.js'
+extends:
+  - recommended
+rules:
+  no-unused-components: error
+  no-required-schema-properties-undefined: error
+  no-invalid-schema-examples: error
+  operation-4xx-problem-details-rfc7807: error

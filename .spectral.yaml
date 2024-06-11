@@ -1,0 +1,13 @@
+extends: 
+  - spectral:oas
+  - "@stoplight/spectral-owasp-ruleset"
+formats:
+  - "oas3_1"
+  - "oas3_0"
+overrides:
+  - files:
+      - "**/*.yaml"
+    rules:
+      "owasp:api4:2023-string-restricted": error
+      "owasp:api4:2023-string-limit": error
+      "owasp:api4:2023-rate-limit": warn
