@@ -1,0 +1,2 @@
+GET http://localhost:2000/users/1
+api_key: test

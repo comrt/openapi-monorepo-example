@@ -1,0 +1,46 @@
+{
+  "name": "petstore",
+  "targets": {
+    "build": {
+      "command": "redocly bundle apis/petstore/openapi.yaml -o dist/apis/petstore/petstore-openapi.yaml"
+    },
+    "publish": {
+    },
+    "lint": {
+      "command": "redocly lint apis/petstore/openapi.yaml"
+    },
+    "spectral-lint": {
+      "command": "spectral lint apis/petstore/openapi.yaml "
+    },
+    "generate": {
+      "command": "rimraf gen && openapi-generator-cli generate -i dist/apis/petstore/petstore-openapi.yaml -c config.yaml -g jaxrs-spec -o gen/apis/petstore",
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ]
+    },
+    "generate-client": {
+      "command": "rimraf gen && openapi-generator-cli generate -i dist/apis/petstore/petstore-openapi.yaml -c config-angular.yaml -g typescript-angular -o gen/apis/petstore",
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ]
+    },
+    "prepare-membrane": {
+      "command": "redocly bundle petstore@membrane -o dist/apis/petstore/membrane-openapi.yaml"
+    },
+    "membrane": {
+      "command": "docker run --rm -p 2000:2000 -v \"$(pwd)/proxies.xml:/opt/membrane/conf/proxies.xml\" -v \"$(pwd)/dist/apis/petstore/membrane-openapi.yaml:/opt/membrane/conf/openapi.yaml\" predic8/membrane:5.5.2",
+      "dependsOn": [
+        {
+          "target": "prepare-membrane"
+        }
+      ]
+    },
+    "mock": {
+      "command": "prism mock dist/apis/petstore/petstore-openapi.yaml"
+    }
+  }
+}
