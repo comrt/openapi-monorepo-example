@@ -4,13 +4,13 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@nx/js": "19.2.2",
-    "@openapitools/openapi-generator-cli": "2.13.4",
-    "@redocly/cli": "1.14.0",
-    "@stoplight/prism-cli": "5.8.1",
-    "@stoplight/spectral-cli": "6.11.1",
+    "@nx/js": "21.0.3",
+    "@openapitools/openapi-generator-cli": "2.20.0",
+    "@redocly/cli": "1.34.3",
+    "@stoplight/prism-cli": "5.14.2",
+    "@stoplight/spectral-cli": "6.15.0",
     "@stoplight/spectral-owasp-ruleset": "2.0.1",
-    "nx": "19.2.2",
-    "rimraf": "5.0.7"
+    "nx": "21.0.3",
+    "rimraf": "6.0.1"
   }
 }

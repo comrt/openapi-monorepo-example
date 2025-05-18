@@ -3,3 +3,6 @@
 /node_modules/
 /.nx/
 /gen/
+
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

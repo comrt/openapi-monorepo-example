@@ -1,0 +1,49 @@
+{
+  "name": "reference",
+  "targets": {
+    "build": {
+      "command": "redocly bundle apis/reference/openapi.yaml -o dist/apis/reference/reference-openapi.yaml",
+      "dependsOn": [
+        "lint"
+      ]
+    },
+    "publish": {
+    },
+    "redocly-lint": {
+      "command": "redocly lint apis/reference/openapi.yaml"
+    },
+    "lint": {
+      "command": "spectral lint apis/reference/openapi.yaml "
+    },
+    "generate-server": {
+      "command": "rimraf gen && openapi-generator-cli generate -i dist/apis/reference/reference-openapi.yaml -c config.yaml -g jaxrs-spec -o gen/apis/reference",
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ]
+    },
+    "generate-client": {
+      "command": "rimraf gen && openapi-generator-cli generate -i dist/apis/reference/reference-openapi.yaml -c config-angular.yaml -g typescript-angular -o gen/apis/reference",
+      "dependsOn": [
+        {
+          "target": "build"
+        }
+      ]
+    },
+    "prepare-membrane": {
+      "command": "redocly bundle reference@membrane -o dist/apis/reference/membrane-openapi.yaml"
+    },
+    "membrane": {
+      "command": "docker run --rm -p 2000:2000 -v \"$(pwd)/proxies.xml:/opt/membrane/conf/proxies.xml\" -v \"$(pwd)/dist/apis/reference/membrane-openapi.yaml:/opt/membrane/conf/openapi.yaml\" predic8/membrane:5.5.2",
+      "dependsOn": [
+        {
+          "target": "prepare-membrane"
+        }
+      ]
+    },
+    "mock": {
+      "command": "prism mock dist/apis/reference/reference-openapi.yaml"
+    }
+  }
+}

@@ -1,0 +1,601 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: OpenAPI Code Generator Example API
+  summary: Example API for code generation
+  description: |
+    Demo API to generate code from
+    as an example:
+    * Multipart
+    * JSON serialization
+  termsOfService: https://ocp.com/terms/
+  contact:
+    email: support@ocp.com
+    name: API Support Group
+    url: https://support.ocp.com/contact
+  license:
+    name: "Apache 2.0"
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+jsonSchemaDialect: https://spec.openapis.org/oas/3.1/dialect/base
+servers:
+  - url: https://localhost:8008
+    x-internal: true
+  - url: https://{subdomain}.domain/{path}
+    x-internal: false
+    variables:
+      path:
+        default: api
+        enum:
+          - api
+          - resources
+      subdomain:
+        default: www
+        enum:
+          - www
+          - api
+tags:
+  - name: Multipart Upload
+  - name: Multipart Download
+  - name: Json
+paths:
+  /uploads/ref-request-body-with-inline-schema:
+    post:
+      operationId: uploads-referenced-request-body-inline-schema
+      tags:
+        - Multipart Upload
+      requestBody:
+        $ref: "#/components/requestBodies/MultipartUploadRequestBodyWithInlineSchema"
+      responses:
+        '201':
+          description: Uploaded file successfully created
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /uploads/ref-request-body-with-ref-schema:
+    post:
+      operationId: uploads-referenced-request-body-referenced-schema
+      tags:
+        - Multipart Upload
+      requestBody:
+        $ref: "#/components/requestBodies/MultipartUploadReferencedRequestBodyReferencedSchema"
+      responses:
+        '201':
+          description: Uploaded file successfully created
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /uploads/inline-request-body-with-ref-schema:
+    post:
+      operationId: uploads-inline-request-body-with-ref-schema
+      tags:
+        - Multipart Upload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/MultipartUploadReferencedSchema"
+            encoding:
+              multipleXmlObjects:
+                contentType: application/xml
+              singleXmlObject:
+                contentType: application/xml
+              singleBinary:
+                contentType: application/pdf, application/octet-stream
+              multipleBinaries:
+                contentType: application/pdf, application/octet-stream
+      responses:
+        '201':
+          description: Uploaded file successfully created
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /uploads/inline-request-body-with-inline-schema:
+    post:
+      operationId: uploads-inline-request-body-with-inline-schema
+      tags:
+        - Multipart Upload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - singleBinary
+              properties:
+                singleBinary:
+                  type: string
+                  contentMediaType: application/octet-stream
+                  maxLength: 100000
+                multipleBinaries:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    maxLength: 100000
+                  minItems: 1
+                  maxItems: 10
+            encoding:
+              singleBinary:
+                contentType: application/pdf, application/octet-stream
+              multipleBinaries:
+                contentType: application/pdf, application/octet-stream
+      responses:
+        '201':
+          description: Uploaded file successfully created
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /downloads/ref-response-with-ref-schema:
+    get:
+      operationId: downloads-ref-response-with-ref-schema
+      tags:
+        - Multipart Download
+      responses:
+        '200':
+          $ref: '#/components/responses/MultipartDownloadResponseWithRefSchema'
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /downloads/ref-response-with-inline-schema:
+    get:
+      operationId: downloads-ref-response-with-inline-schema
+      tags:
+        - Multipart Download
+      responses:
+        '200':
+          $ref: '#/components/responses/MultipartDownloadResponseWithInlineSchema'
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /downloads/inline-response-with-ref-schema:
+    get:
+      operationId: downloads-inline-response-with-ref-schema
+      tags:
+        - Multipart Download
+      responses:
+        '200':
+          description: Download
+          content:
+            multipart/form-data:
+              schema:
+                $ref: "#/components/schemas/MultipartDownloadSchema"
+              encoding:
+                multipleXmlObjects:
+                  contentType: application/xml
+                singleBinary:
+                  contentType: application/pdf, application/octet-stream
+                multipleBinaries:
+                  contentType: application/pdf, application/octet-stream
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /downloads/inline-response-with-inline-schema:
+    get:
+      operationId: downloads-inline-response-with-inline-schema
+      tags:
+        - Multipart Download
+      responses:
+        '200':
+          description: Download
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - singleBinary
+                properties:
+                  singleBinary:
+                    type: string
+                    format: binary
+                    maxLength: 100000
+                  multipleBinaries:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+                      maxLength: 100000
+                    minItems: 1
+                    maxItems: 10
+              encoding:
+                singleBinary:
+                  contentType: application/pdf, application/octet-stream
+                multipleBinaries:
+                  contentType: application/pdf, application/octet-stream
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /insurance/applications:
+    post:
+      operationId: createApplication
+      tags:
+        - Json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+      responses:
+        '201':
+          description: Created Person
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+  /messages:
+    post:
+      operationId: createMessage
+      tags:
+        - Json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                title: MessageResponse
+                properties:
+                  content:
+                    type: string
+                    pattern: ^.*$q
+                    maxLength: 255
+        '422':
+          $ref: "../../libs/core/respones/UnprocessableEntityResponse.yaml"
+components:
+  responses:
+    MultipartDownloadResponseWithRefSchema:
+      description: Download
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/MultipartDownloadSchema"
+          encoding:
+            multipleXmlObjects:
+              contentType: application/xml
+            singleBinary:
+              contentType: application/pdf, application/octet-stream
+            multipleBinaries:
+              contentType: application/pdf, application/octet-stream
+    MultipartDownloadResponseWithInlineSchema:
+      description: Download
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - singleBinary
+            properties:
+              singleBinary:
+                type: string
+                format: binary
+                maxLength: 100000
+              multipleBinaries:
+                type: array
+                items:
+                  type: string
+                  format: binary
+                  maxLength: 100000
+                minItems: 1
+                maxItems: 10
+          encoding:
+            singleBinary:
+              contentType: application/pdf, application/octet-stream
+            multipleBinaries:
+              contentType: application/pdf, application/octet-stream
+  requestBodies:
+    MultipartUploadReferencedRequestBodyReferencedSchema:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/MultipartUploadReferencedSchema"
+          encoding:
+            multipleXmlObjects:
+              contentType: application/xml
+            singleXmlObject:
+              contentType: application/xml
+            singleBinary:
+              contentType: application/pdf, application/octet-stream
+            multipleBinaries:
+              contentType: application/pdf, application/octet-stream
+    MultipartUploadRequestBodyWithInlineSchema:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            title: ReferencedRequestBodyInlineSchema
+            additionalProperties: false
+            required:
+              - singleBinary
+            properties:
+              singleBinary:
+                type: string
+                contentMediaType: application/octet-stream
+                maxLength: 100000
+              multipleBinaries:
+                type: array
+                items:
+                  type: string
+                  contentMediaType: application/octet-stream
+                  maxLength: 100000
+                minItems: 1
+                maxItems: 10
+          encoding:
+            singleBinary:
+              contentType: application/pdf, application/octet-stream
+            multipleBinaries:
+              contentType: application/pdf, application/octet-stream
+  schemas:
+    MultipartUploadReferencedSchema:
+      type: object
+      additionalProperties: false
+      required:
+        - singleBinary
+      properties:
+        singleBinary:
+          type: string
+          format: binary
+          maxLength: 100000
+        multipleBinaries:
+          type: array
+          items:
+            type: string
+            format: binary
+            maxLength: 100000
+          minItems: 1
+          maxItems: 10
+        simpleText:
+          type: string
+          minLength: 1
+          maxLength: 4096
+          pattern: ^.*$
+        singleInteger:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 1000
+        multipleIntegers:
+          type: array
+          maxItems: 10
+          items:
+            type: integer
+            format: int64
+            minimum: 0
+            maximum: 1000
+        singleDateTime:
+          type: string
+          format: date-time
+          maxLength: 255
+        singleDate:
+          type: string
+          format: date
+          maxLength: 255
+        singleUUID:
+          type: string
+          format: uuid
+          maxLength: 255
+          pattern: ^.*$
+        singleNumber:
+          type: number
+          format: double
+        excess:
+          $ref: '#/components/schemas/Excess'
+        singleBoolean:
+          type: boolean
+        singleJsonObject:
+          $ref: '#/components/schemas/DomainOject'
+        multipleJsonObjects:
+          type: array
+          minItems: 1
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/DomainOject'
+        singleXmlObject:
+          $ref: '#/components/schemas/DomainOject'
+        multipleXmlObjects:
+          type: array
+          minItems: 1
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/DomainOject'
+    MultipartDownloadSchema:
+      type: object
+      additionalProperties: false
+      required:
+        - file
+      properties:
+        singleBinary:
+          type: string
+          format: binary
+          maxLength: 100000
+        multipleBinaries:
+          type: array
+          items:
+            type: string
+            format: binary
+            maxLength: 100000
+          minItems: 1
+          maxItems: 10
+        simpleText:
+          type: string
+          minLength: 1
+          maxLength: 4096
+          pattern: ^.*$
+        singleInteger:
+          type: integer
+          format: int32
+          maximum: 0
+          minimum: -32
+        multipleIntegers:
+          type: array
+          maxItems: 20
+          items:
+            type: integer
+            format: int64
+            maximum: 300
+            minimum: 0
+        singleDateTime:
+          type: string
+          format: date-time
+          maxLength: 255
+          pattern: ^.*$
+        singleDate:
+          type: string
+          format: date
+          maxLength: 255
+          pattern: ^.*$
+        singleUUID:
+          type: string
+          format: uuid
+          maxLength: 255
+          pattern: ^.*$
+        singleNumber:
+          type: number
+          format: double
+        singleEnum:
+          type: string
+          enum:
+            - RED
+            - BLUE
+            - GREEN
+        singleBoolean:
+          type: boolean
+        singleJsonObject:
+          $ref: '#/components/schemas/DomainOject'
+        multipleJsonObjects:
+          type: array
+          minItems: 1
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/DomainOject'
+        singleXmlObject:
+          $ref: '#/components/schemas/DomainOject'
+        multipleXmlObjects:
+          type: array
+          minItems: 1
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/DomainOject'
+    Excess:
+      description: Selbstbeteiligung
+      type: string
+      enum:
+        - 150_EURO
+        - 300_EURO
+        - 500_EURO
+    Money:
+      type: object
+      additionalProperties: false
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: number
+          format: double
+        currency:
+          type: string
+          maxLength: 3
+          minLength: 2
+          pattern: ^[A-Z]{2,3}$
+    DomainOject:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - size
+        - amount
+        - paymentInfo
+      properties:
+        paymentInfo:
+          $ref: '#/components/schemas/Money'
+        name:
+          type: string
+          maxLength: 32
+          pattern: ^.*$
+        size:
+          type: integer
+          format: int32
+          maximum: 1000
+          minimum: 1
+        amount:
+          type: number
+          format: double
+        optional:
+          type: boolean
+        created:
+          type: string
+          format: date
+          maxLength: 255
+          pattern: ^.*$
+        prices:
+          type: array
+          items:
+            type: number
+            format: double
+            maximum: 1000
+            exclusiveMaximum: 1000
+            exclusiveMinimum: 0
+          minItems: 1
+          maxItems: 10
+    Message:
+      oneOf:
+        - $ref: '#/components/schemas/SimpleMessage'
+        - $ref: '#/components/schemas/ComplexMessage'
+      discriminator:
+        propertyName: type
+        mapping:
+          simple: '#/components/schemas/SimpleMessage'
+          complex: '#/components/schemas/ComplexMessage'
+    BaseMessage:
+      type: object
+      #      discriminator:
+      #        propertyName: type
+      #        mapping:
+      #          simple: SimpleMessage
+      #          complex: ComplexMessage
+      required:
+        - content
+      properties:
+        type:
+          $ref: "#/components/schemas/MessageType"
+        content:
+          type: string
+          maxLength: 255
+          pattern: ^.*$
+    MessageType:
+      type: string
+      enum:
+        - simple
+        - complex
+    SimpleMessage:
+      allOf:
+        - $ref: '#/components/schemas/BaseMessage'
+        - type: object
+          properties:
+            preamble:
+              type: string
+              maxLength: 255
+              pattern: ^.*$
+    ComplexMessage:
+      allOf:
+        - $ref: '#/components/schemas/BaseMessage'
+        - type: object
+          properties:
+            note:
+              type: string
+              maxLength: 255
+              pattern: ^.*$
+    Person:
+      type: object
+      properties:
+        firstName:
+          $ref: '#/components/schemas/FirstName'
+    FirstName:
+      type: string
+      maxLength: 255
+      pattern: ^.*$
+      examples:
+        - Max
+        - Maria

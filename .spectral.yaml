@@ -1,13 +1,52 @@
-extends: 
+extends:
   - spectral:oas
   - "@stoplight/spectral-owasp-ruleset"
 formats:
   - "oas3_1"
   - "oas3_0"
+aliases:
+  StringProperties:
+    targets:
+      - formats:
+          - oas3_1
+        given:
+          - '$..[?(@ && @.type=="string")]'
+          - '$..[?(@ && @.type && @.type.constructor.name === "Array" && @.type.includes("string"))]'
+parserOptions:
+  duplicateKeys: warn
+rules:
+  string-must-be-constrained:
+    message: "Schema of type string should specify a format, pattern, enum, contentMediaType or const."
+    description: "To avoid unexpected values being sent or leaked, strings should have a `format`, RegEx `pattern`, `enum`, `contentMediaType` or `const`."
+    severity: error
+    given: "#StringProperties"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          anyOf:
+            - required:
+              - format
+            - required:
+              - contentMediaType
+            - required:
+              - pattern
+            - required:
+              - enum  
+
 overrides:
   - files:
       - "**/*.yaml"
     rules:
-      "owasp:api4:2023-string-restricted": error
+      "operation-description": off
+      "owasp:api2:2023-write-restricted": off
+      "owasp:api2:2023-read-restricted": off
+      "owasp:api4:2023-rate-limit-responses-429": off
+      "owasp:api8:2023-define-error-responses-401": off
+      "owasp:api8:2023-define-error-responses-500": off
+      "owasp:api4:2023-string-restricted": off
+      "owasp:api4:2023-rate-limit": off
+
+
       "owasp:api4:2023-string-limit": error
-      "owasp:api4:2023-rate-limit": warn
